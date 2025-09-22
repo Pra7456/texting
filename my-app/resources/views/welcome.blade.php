@@ -1,77 +1,108 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>laravel curd</title>
-
+    <title>CRUD Operation</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+
         h1 {
-            /* background-color: brown;
-            color: aliceblue;
-            text-align: center;
-            width: 50%;
-            */
-
-            text-align: center;
-
+            color: #333;
         }
 
-        .heading {
-            margin: 100px;
-            border-radius: 10px;
-            background-color: blueviolet;
-            color: aliceblue;
-
-
+        form {
+            margin-bottom: 30px;
         }
 
-        .container {
-            border-radius: 5px;
-            border: 2px solid black;
-            margin-left: 100px;
-            margin-right: 100px;
+        label {
+            display: block;
+            margin-top: 10px;
         }
 
-        .table {
+        input,
+        select {
+            padding: 8px;
+            width: 300px;
+        }
 
+        table {
             width: 100%;
-
+            border-collapse: collapse;
+            margin-top: 20px;
         }
 
-        tbody {
-            border: 1px;
+        th,
+        td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        img {
+            max-width: 100px;
+            height: auto;
         }
     </style>
-
 </head>
 
 <body>
 
-    <div class="heading">
-        <h1>Laravel 12 Curd</h1>
-    </div>
+    <h1>CRUD Operation</h1>
 
-    <div class="container">
-        <table class="table">
-            <thead>
-                <th>ID</th>
+    {{-- Form to Add New Person --}}
+    <!-- <form action="{{ route('people.store') }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        <label>First Name:</label>
+        <input type="text" name="name" required>
+
+        <label>Last Name:</label>
+        <input type="text" name="last_name" required>
+
+        <label>Date:</label>
+        <input type="date" name="date" required>
+
+        <label>Image:</label>
+        <input type="file" name="image">
+
+        <label>City:</label>
+        <input type="text" name="city" required>
+
+        <br><br>
+        <button type="submit">Add New</button>
+    </form> -->
+
+    {{-- Table of People --}}
+    <table>
+        <thead>
+            <tr>
                 <th>Name</th>
+                <th>Last Name</th>
                 <th>Date</th>
+                <th>Image</th>
                 <th>City</th>
-            </thead>
-            <tbody>
-                <td>1</td>
-                <td>jay</td>
-                <td>10-sep-2025</td>
-                <td>delhi</td>
-            </tbody>
-        </table>
-
-    </div>
-
-
+            </tr>
+        </thead>
+        <tbody>
+            <!-- @foreach ($people as $person)
+                <tr>
+                    <td>{{ $person->name }}</td>
+                    <td>{{ $person->last_name }}</td>
+                    <td>{{ $person->date }}</td>
+                    <td>
+                        @if ($person->image)
+                            <img src="{{ asset('storage/' . $person->image) }}" alt="Image">
+                        @else
+                            No image
+                        @endif
+                    </td>
+                    <td>{{ $person->city }}</td>
+                </tr>
+            @endforeach -->
+        </tbody>
+    </table>
 
 </body>
 
