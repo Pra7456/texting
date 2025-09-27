@@ -13,6 +13,7 @@
 
     <h1>CRUD Form with Multiple Inputs</h1>
 
+    <div class="container"><a class="btn btn-primary" href="{{ asset('add') }}">Add Data</a> </div>
 
     <table>
         <thead>
