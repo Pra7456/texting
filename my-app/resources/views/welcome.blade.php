@@ -4,150 +4,197 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Simple CRUD Home Page</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 500px;
-            margin: 40px auto;
-            padding: 20px;
-            background: #f4f4f4;
-            border-radius: 8px;
-        }
+    <title>CRUD Form with Multiple Inputs</title>
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-
-        input[type="text"] {
-            width: 70%;
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        button {
-            padding: 10px 15px;
-            margin-left: 10px;
-            font-size: 16px;
-            border: none;
-            background-color: #28a745;
-            color: white;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #218838;
-        }
-
-        ul {
-            list-style-type: none;
-            padding-left: 0;
-            margin-top: 20px;
-        }
-
-        li {
-            background: white;
-            padding: 10px 15px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .actions button {
-            background-color: #007bff;
-            margin-left: 5px;
-        }
-
-        .actions button.delete {
-            background-color: #dc3545;
-        }
-
-        .actions button:hover {
-            opacity: 0.8;
-        }
-    </style>
 </head>
 
 <body>
-    <h1>Simple CRUD Home Page</h1>
-    <input type="text" id="itemInput" placeholder="Add or edit item" />
-    <button id="addBtn">Add</button>
 
-    <ul id="itemList">
-        <!-- Items will appear here -->
-    </ul>
+    <h1>CRUD Form with Multiple Inputs</h1>
+
+    <form id="crudForm" enctype="multipart/form-data">
+        <div>
+            <label for="name">Name *</label>
+            <input type="text" id="name" required />
+        </div>
+        <div>
+            <label for="number">Number *</label>
+            <input type="number" id="number" required />
+        </div>
+        <div>
+            <label for="email">Email *</label>
+            <input type="email" id="email" required />
+        </div>
+        <div>
+            <label for="idInput">ID *</label>
+            <input type="text" id="idInput" required />
+        </div>
+        <div>
+            <label for="password">Password *</label>
+            <input type="password" id="password" required />
+        </div>
+        <div>
+            <label for="cpassword">Confirm Password *</label>
+            <input type="password" id="cpassword" required />
+        </div>
+        <div>
+            <label for="image">Upload Image *</label>
+            <input type="file" id="image" accept="image/*" required />
+        </div>
+        <button type="submit" id="submitBtn">Add</button>
+    </form>
+
+
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Numbe aar</th>
+                <th>Email</th>
+                <th>ID</th>
+                <th>Password</th>
+                <th>Image</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            <!-- Entries will show here -->
+        </tbody>
+    </table>
 
     <script>
-        const input = document.getElementById('itemInput');
-        const addBtn = document.getElementById('addBtn');
-        const itemList = document.getElementById('itemList');
+        const form = document.getElementById('crudForm');
+        const nameInput = document.getElementById('name');
+        const numberInput = document.getElementById('number');
+        const emailInput = document.getElementById('email');
+        const idInput = document.getElementById('idInput');
+        const passwordInput = document.getElementById('password');
+        const cpasswordInput = document.getElementById('cpassword');
+        const imageInput = document.getElementById('image');
+        const submitBtn = document.getElementById('submitBtn');
+        const tableBody = document.getElementById('tableBody');
 
+        let entries = [];
         let editIndex = null;
 
-        // Add or Update item
-        addBtn.addEventListener('click', () => {
-            const value = input.value.trim();
-            if (value === '') return alert('Please enter an item');
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
 
-            if (editIndex === null) {
-                // Add new item
-                addItem(value);
-            } else {
-                // Update existing item
-                updateItem(value);
+            // Validation
+            if (passwordInput.value !== cpasswordInput.value) {
+                alert('Passwords do not match!');
+                return;
             }
 
-            input.value = '';
-            editIndex = null;
-            addBtn.textContent = 'Add';
+            if (!imageInput.files[0] && editIndex === null) {
+                alert('Please upload an image');
+                return;
+            }
+
+            const reader = new FileReader();
+
+            if (imageInput.files[0]) {
+                reader.readAsDataURL(imageInput.files[0]);
+            } else {
+                // If editing and image not changed, skip FileReader
+                submitEntry(null);
+            }
+
+            reader.onload = () => {
+                submitEntry(reader.result);
+            };
+
         });
 
-        function addItem(text) {
-            const li = document.createElement('li');
+        function submitEntry(imageDataUrl) {
+            const entryData = {
+                name: nameInput.value.trim(),
+                number: numberInput.value.trim(),
+                email: emailInput.value.trim(),
+                id: idInput.value.trim(),
+                password: passwordInput.value.trim(),
+                image: imageDataUrl,
+            };
 
-            li.innerHTML = `
-        <span>${text}</span>
-        <div class="actions">
+            if (editIndex === null) {
+                // Add new
+                entries.push(entryData);
+            } else {
+                // Update existing, keep old image if no new image uploaded
+                if (imageDataUrl) {
+                    entries[editIndex] = entryData;
+                } else {
+                    entries[editIndex] = {
+                        ...entryData,
+                        image: entries[editIndex].image,
+                    };
+                }
+                editIndex = null;
+                submitBtn.textContent = 'Add';
+            }
+
+            form.reset();
+            renderTable();
+        }
+
+        function renderTable() {
+            tableBody.innerHTML = '';
+
+            entries.forEach((entry, index) => {
+                const tr = document.createElement('tr');
+
+                tr.innerHTML = `
+        <td>${entry.name}</td>
+        <td>${entry.number}</td>
+        <td>${entry.email}</td>
+        <td>${entry.id}</td>
+        <td>${'*'.repeat(entry.password.length)}</td>
+        <td><img src="${entry.image}" alt="User Image" /></td>
+        <td class="actions">
           <button class="edit">Edit</button>
           <button class="delete">Delete</button>
-        </div>
+        </td>
       `;
 
-            // Edit button
-            li.querySelector('.edit').addEventListener('click', () => {
-                input.value = text;
-                editIndex = Array.from(itemList.children).indexOf(li);
-                addBtn.textContent = 'Update';
-            });
+                // Edit button
+                tr.querySelector('.edit').addEventListener('click', () => {
+                    loadEntryForEdit(index);
+                });
 
-            // Delete button
-            li.querySelector('.delete').addEventListener('click', () => {
-                itemList.removeChild(li);
-                // Reset edit if deleting the item being edited
-                if (editIndex === Array.from(itemList.children).indexOf(li)) {
-                    input.value = '';
-                    editIndex = null;
-                    addBtn.textContent = 'Add';
-                }
-            });
+                // Delete button
+                tr.querySelector('.delete').addEventListener('click', () => {
+                    if (confirm('Are you sure you want to delete this entry?')) {
+                        entries.splice(index, 1);
+                        if (editIndex === index) {
+                            form.reset();
+                            editIndex = null;
+                            submitBtn.textContent = 'Add';
+                        }
+                        renderTable();
+                    }
+                });
 
-            itemList.appendChild(li);
+                tableBody.appendChild(tr);
+            });
         }
 
-        function updateItem(newText) {
-            if (editIndex !== null) {
-                const li = itemList.children[editIndex];
-                li.querySelector('span').textContent = newText;
-            }
+        function loadEntryForEdit(index) {
+            const entry = entries[index];
+            nameInput.value = entry.name;
+            numberInput.value = entry.number;
+            emailInput.value = entry.email;
+            idInput.value = entry.id;
+            passwordInput.value = entry.password;
+            cpasswordInput.value = entry.password;
+            // Image input cannot be prefilled for security reasons — user must upload again if want to change
+            imageInput.value = '';
+            editIndex = index;
+            submitBtn.textContent = 'Update';
         }
     </script>
+
+
 </body>
 
 </html>
