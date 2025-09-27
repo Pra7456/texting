@@ -9,3 +9,5 @@ Route::get('/', function () {
 Route::get('/add', function () {
     return view('add');
 });
+
+Route::resource('crud', CrudEntryController::class);
