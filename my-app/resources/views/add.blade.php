@@ -1,19 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>CRUD Form with Multiple Inputs</title>
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
-
-</head>
-
-<body>
-
-</body>
+@include ('navbar')
 
 <h1>CRUD Form with Multiple Inputs</h1>
+<hr>
 
 <form id="crudForm" enctype="multipart/form-data">
     <div>
@@ -47,11 +35,4 @@
     <button type="submit" id="submitBtn">Add</button>
 </form>
 
-<!-- JS -->
-<script src="{{ asset('js/script.js') }}"></script>
-
-</body>
-
-
-
-</html>
+@include('footer')
